@@ -40,7 +40,7 @@ Controller Class안에 `@GetMapping` 으로 URL주소 반환
 
 ### MVC 패턴 실습 요약
 
-![Untitled](SpringBoot%2072a7ad9f78e64aa0813cde4df4393bbc/Untitled%201.png)
+![Untitled](https://www.notion.so/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fcd52ebdb-3ddb-4aa5-957f-fd4af2e2865e%2F800e60ef-c13c-4cb9-a372-af12ec95a512%2FUntitled.png?table=block&id=222f739b-751f-4d53-a993-183cd6da7f9b&spaceId=cd52ebdb-3ddb-4aa5-957f-fd4af2e2865e&width=2000&userId=6670a711-99e4-4deb-9093-ce4c11bf163e&cache=v2)
 
 # 3장
 
