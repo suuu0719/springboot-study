@@ -1,12 +1,10 @@
 # SpringBoot
 
-# 2장
-
-:MVC 패턴 이해와 실습
+# 2장 MVC 패턴 이해와 실습
 
 ## MVC패턴 활용해 뷰 템플릿 페이지 만들기
 
-![Untitled](https://www.notion.so/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fcd52ebdb-3ddb-4aa5-957f-fd4af2e2865e%2F422edee7-466c-4faf-9465-e6f3b5c2ef5f%2FUntitled.png?table=block&id=baa1f2d5-7612-47d6-9a49-0a7776b81661&spaceId=cd52ebdb-3ddb-4aa5-957f-fd4af2e2865e&width=2000&userId=6670a711-99e4-4deb-9093-ce4c11bf163e&cache=v2)
+![스크린샷 2024-01-03 210123](https://github.com/suuu0719/springboot-study/assets/118423039/d821dee1-63b4-4c4c-8562-4b96671845ac)
 
 ### mustache(뷰)
 
@@ -40,7 +38,7 @@ Controller Class안에 `@GetMapping` 으로 URL주소 반환
 
 ### MVC 패턴 실습 요약
 
-![Untitled](https://www.notion.so/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fcd52ebdb-3ddb-4aa5-957f-fd4af2e2865e%2F800e60ef-c13c-4cb9-a372-af12ec95a512%2FUntitled.png?table=block&id=222f739b-751f-4d53-a993-183cd6da7f9b&spaceId=cd52ebdb-3ddb-4aa5-957f-fd4af2e2865e&width=2000&userId=6670a711-99e4-4deb-9093-ce4c11bf163e&cache=v2)
+![image](https://github.com/suuu0719/springboot-study/assets/118423039/9ac8a6d2-5d08-47ae-af5e-9e756e9ff7c2)
 
 # 3장
 
@@ -55,7 +53,7 @@ Controller Class안에 `@GetMapping` 으로 URL주소 반환
 
 ## 3.2 폼데이터 DTO로 받기
 
-### <form>태그 속성>
+### < form>태그 속성
 
 - action: 어디로 보낼지에 관한 정보, URL 연결 주소. ex) `action="/articles/create"` 해당 페이지로 폼데이터를 보낸다는 의미
 - method: 어떻게 보낼지에 관한 정보, 속성값으로 get, post 2가지 설정 가능.
@@ -97,4 +95,34 @@ mustache 입력폼에 필드명 지정하면 해당 입력폼이 DTO의 필드�
 
 `리파지터리`: 엔티티가 DB속 테이블에 저장 및 관리될 수 있게 하는 인터페이스
 
+폼 데이터를 DB에 저장하려면
+1. DTO를 엔티티로 변환하기
+2. 리파지터리를 이용해 엔티티를 DB에 저장하기
+
 ### DTO를 엔티티로 변환하기
+`Article article = form.toEntity();` // form 객체의 toEntity() 메서드 호출, 그 반환 값을 Article 타입의 article 엔티티에 저장
+
+`Article 클래스 만들기`: 프로젝트에 `entity` 패키지 만든 후 클래스 생성
+1. `@Entity` 어노테이션 붙이기
+2. `@Column` 어노테이션 붙이고 필드 생성
+3. 대푯값 `@Id`로 선언 후 `@GeneratedValue`로 대푯값 자동 생성 -> 대푯값으로 중복된 데이터 있더라도 구분 가능
+4. 생성자와 toString() 메서드 생성
+
+`toEntity()`메서드 생성: DTO인 form 객체를 엔티티 객체로 변환하는 역할
+1. `ArticleForm` (DTO 클래스)에 toEntity() 메서드 추가
+2. DTO 객체 엔티티로 반환, `return new Article(null, title, content);` //id정보 제외한 ArticleForm 객체의 전달값 입력
+
+### 리파지터리로 엔티티를 DB에 저장하기
+1. 컨트롤러 필드 선언부에 리파지터리 객체 선언
+2. `Article saved = articleRepository.save();` // save() 메서드 호출해 article 엔티티 저장. save() 메서드는 저장된 엔티티를 반환하여 Article 타입의 saved라는 객체에 받아옴 
+
+`리파지터리 만들기`: 인터페이스 생성
+
+1. 프로젝트에 `repository` 패키지 생성, `ArticleRepository` 인터페이스 생성
+2. JPA에서 제공하는 인터페이스 활용. 리파지터리 이름 뒤에`extend CrudRepository<T, ID>` 선택, <> 안에 2개의 제네릭 요소를 받음
+   1. `Article`: 관리 대상 엔티티의 클래스 타입, 여기서는 Article
+   2. `Long`: 관리 대상 엔티티의 대푯값 타입. id가 대푯값이므로 Long타입 입력
+
+`객체 주입하기`: 스프링 부트는 객체를 만들지 않아도 미리 생성해놓은 객체 가져다 연결해서 사용 가능
+
+**의존성 주입(DI)**: 컨트롤러 클래스에 `@AutoWired` 어노테이션 붙이면 스프링부트가 만들어놓은 객체 가져와 주입
