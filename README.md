@@ -6,7 +6,7 @@
 
 ## MVC패턴 활용해 뷰 템플릿 페이지 만들기
 
-![Untitled](SpringBoot%2072a7ad9f78e64aa0813cde4df4393bbc/Untitled.png)
+![Untitled]([SpringBoot%2072a7ad9f78e64aa0813cde4df4393bbc/Untitled.png](https://www.notion.so/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fcd52ebdb-3ddb-4aa5-957f-fd4af2e2865e%2F422edee7-466c-4faf-9465-e6f3b5c2ef5f%2FUntitled.png?table=block&id=baa1f2d5-7612-47d6-9a49-0a7776b81661&spaceId=cd52ebdb-3ddb-4aa5-957f-fd4af2e2865e&width=2000&userId=6670a711-99e4-4deb-9093-ce4c11bf163e&cache=v2))
 
 ### mustache(뷰)
 
