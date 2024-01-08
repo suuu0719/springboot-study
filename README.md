@@ -44,12 +44,12 @@ Controller Class안에 `@GetMapping` 으로 URL주소 반환
 
 ## 3.1 폼데이터란
 
-`폼데이터`: html 요소인 <form>태그에 실려 전송되는 데이터
+`폼데이터`: html 요소인 < form>태그에 실려 전송되는 데이터
 
 `<form> 태그` : 웹프라우저에서 서버로 데이터를 전송할 때 사용, 데이터를 전송할때 어디로, 어떻게 보낼지 등을 적어서 보냄
-<form>태그에 실어 보낸 데이터는 서버의 컨트롤러가 객체에 담아서 받음
+< form>태그에 실어 보낸 데이터는 서버의 컨트롤러가 객체에 담아서 받음
 
-`DTO`: data transfer object, <form>태그에 실어보낸 데이터를 담아 받는 서버 컨트롤러의 객체, DTO로 받은 데이터는 최종적으로 데이터페이스에 저장됨
+`DTO`: data transfer object, < form>태그에 실어보낸 데이터를 담아 받는 서버 컨트롤러의 객체, DTO로 받은 데이터는 최종적으로 데이터페이스에 저장됨
 
 ## 3.2 폼데이터 DTO로 받기
 
@@ -126,3 +126,17 @@ mustache 입력폼에 필드명 지정하면 해당 입력폼이 DTO의 필드�
 `객체 주입하기`: 스프링 부트는 객체를 만들지 않아도 미리 생성해놓은 객체 가져다 연결해서 사용 가능
 
 **의존성 주입(DI)**: 컨트롤러 클래스에 `@AutoWired` 어노테이션 붙이면 스프링부트가 만들어놓은 객체 가져와 주입
+
+## 3.4 DB데이터 주입하기
+### CRUD
+`create`: 생성 `read` : 조회 `update` : 수정 `delete` : 삭제, CRUD 조작은 SQL로 수행
+### H2 DB 접속하기
+src > main > resources > application.properties에 `spring.h2.console.enabled=true` 작성
+
+`localhost:8080/h2-console` 접속, RUN 탭에서 jdbc 주소 찾은 후 JDBC URL에 붙여 넣고 Connect
+### SELECT문: 테이블의 속성 조회
+`SELECT 속성명 FROM 테이블명;`
+
+속성명 대신 * 사용 시 모든 속성을 조회하라는 뜻
+### INSERT문: 테이블에 데이터(레코드) 직접 삽입
+`INSERT INTO 테이블명(속셩명1, 속성명2, 속성명3, ...) VALUES (값1, 값2, 값3, ...);`
