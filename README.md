@@ -40,7 +40,7 @@ Controller Class안에 `@GetMapping` 으로 URL주소 반환
 
 ![image](https://github.com/suuu0719/springboot-study/assets/118423039/9ac8a6d2-5d08-47ae-af5e-9e756e9ff7c2)
 
-# 3장
+# 3장 게시판 만들고 새 글 작성하기: Create
 
 ## 3.1 폼데이터란
 
@@ -53,7 +53,7 @@ Controller Class안에 `@GetMapping` 으로 URL주소 반환
 
 ## 3.2 폼데이터 DTO로 받기
 
-### < form>태그 속성
+### \<form>태그 속성
 
 - action: 어디로 보낼지에 관한 정보, URL 연결 주소. ex) `action="/articles/create"` 해당 페이지로 폼데이터를 보낸다는 의미
 - method: 어떻게 보낼지에 관한 정보, 속성값으로 get, post 2가지 설정 가능.
@@ -140,3 +140,112 @@ src > main > resources > application.properties에 `spring.h2.console.enabled=tr
 속성명 대신 * 사용 시 모든 속성을 조회하라는 뜻
 ### INSERT문: 테이블에 데이터(레코드) 직접 삽입
 `INSERT INTO 테이블명(속셩명1, 속성명2, 속성명3, ...) VALUES (값1, 값2, 값3, ...);`
+
+# 4장 롬복과 리팩터링
+## 4.1 롬복이란
+`롬복`: 코드를 간소화해주는 라이브러리, 필수 콛를 간편하게 작성할 수 있음
+
+`로깅`: 프로그램의 수행 과정을 기록으로 남기는 것
+
+`리팩터링`: 코드의 기능에는 변함없이 코드의 구조 또는 성능을 개선하는 작업
+
+## 4.2 롬복을 활용해 리팩터링하기
+`@AllArgsContructor`: 생성자 어노테이션
+
+`@ToString`: toString() 메소드 어노테이션
+
+`@Slf4j`: 로깅을 위한 어노테이션, Simple Logging Facade for Java의 약자
+
+`log.info()`: 컨트롤러에 print문 대신 로그 남기기 위해 사용
+
+# 5장 게시글 읽기: Read
+### 5.1 데이터 조회 과정
+![KakaoTalk_20240113_170302554](https://github.com/suuu0719/springboot-study/assets/118423039/7c57fc57-56d7-49cf-8577-96bc0782a8b4)
+
+### 5.2 단일 데이터 조회
+``` java
+@GetMapping("/articles/{id}")
+public String show(@PathVariable Long id, Model model){
+        log.info("id =" + id); // id를 잘 받았는지 확인하는 로그 찍기
+        // 1. id를 조회해 데이터 가져오기
+        Article articleEntity = articleRepository.findById(id).orElse(null); //.orElse(null) 붙히지 않고 Article 대신 Optional<Article> 넣어도 됨
+        // 2. 모델에 데이터 등록하기
+        model.addAttribute("article", articleEntity); // article이라는 이름으로 articleEntity 객체 등록
+        // 3. 뷰 페이지 반환하기
+        return "articles/show";
+        }
+```
+``` mustache 
+{{>layouts/header}}
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Title</th>
+        <th scope="col">Content</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#article}}
+    <tr>
+        <th>{{id}}</th>
+        <td>{{title}}</td>
+        <td>{{content}}</td>
+    </tr>
+    {{/article}}
+    </tbody>
+</table>
+{{>layouts/footer}}
+```
+
+### 5.3 데이터 목록 조회
+``` java
+@GetMapping("/articles")
+    public String index(Model model) {
+        // 1. 모든 데이터 가져오기
+        List<Article> articleEntityList = articleRepository.findAll();
+        // 2. 모델에 데이터 등록하기
+        model.addAttribute("articleList", articleEntityList);
+        // 3. 뷰 페이지 설정하기
+        return "articles/index";
+    }
+```
+
+``` mustache
+{{>layouts/header}}
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Title</th>
+        <th scope="col">Content</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#articleList}}
+        <tr>
+            <th>{{id}}</th>
+            <td>{{title}}</td>
+            <td>{{content}}</td>
+        </tr>
+    {{/articleList}}
+    </tbody>
+</table>
+{{>layouts/footer}}
+```
+
+# 6장 게시판 내 페이지 이동하기
+`링크`: 미리 정해 놓은 요청을 간편하게 전송하는 기능, 페이지 이동을 위해 사용. HTML의 &lt;a> 태그 혹은 &lt;form> 태그로 작성, 클라이언트가 링크를 통해 어느 페이지로 이동하겠다고 요청하면 서버는 결과 페이지를 응답
+
+`리다이렉트`: 클라이언트가 보낸 요청을 마친 후 계속해서 처리할 다음 요청 주소를 재지시, 리다이렉트를 지시받은 클라이언트는 해당 주소로 다시 요청을 보내고 서버는 이에 대한 결과를 응답
+
+`뷰 파일에 링크 걸기`: &lt;a> 태그 이용해 다음과 같은 형식으로 작성
+``` html
+<a href="URL 주소">링크를 걸 대상</a>
+```
+`리다이렉트 정의하기`: return문을 사용해 다음과 같은 형식으로 작성
+``` java
+return "redirect:URL_주소";
+```
+
+# 7장 게시글 수정하기: Update
