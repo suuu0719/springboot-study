@@ -249,3 +249,120 @@ return "redirect:URL_주소";
 ```
 
 # 7장 게시글 수정하기: Update
+## 7.1 데이터 수정 과정
+1. <수정 페이지> 만들고 기존 데이터 불러오기
+2. 데이터를 수정해 DB에 반영한 후 결과를 볼 수 있게 <상세페이지>로 리다이렉트하기
+## 7.2 <수정 페이지 만들기>
+``` java
+@GetMapping("/articles/{id}/edit")
+    public String edit(@PathVariable Long id, Model model){
+        // 수정할 데이터 가져오기
+        Article articleEntity = articleRepository.findById(id).orElse(null);
+        // 모델에 데이터 등록하기
+        model.addAttribute("article", articleEntity);
+        // 뷰 페이지 설정하기
+        return "articles/edit";
+    }
+```
+
+```html
+value="{{title}}" <!--데이터 불러오기, article.title에서 article 생략 가능-->
+<a href="/articles/{{id}}">Back</a> <!--Back 버튼 주소 설정-->
+```
+### 수정 페이지가 나올 떄까지 처리 흐름
+1. 클라이언트로부터 데이터 수정 요청이 들어온다
+2. 수정 요청 데이터를 DB에서 찾는다
+3. 수정 요청 데이터를 모델에 등록한다
+4. 뷰페이지에 수정할 데이터를 함께 보여준다
+
+## 7.3 수정 데이터를 DB에 갱신하기
+`MVC`:서버 역할을 분담해 처리하는 기법
+
+`JPA`:서버와 DB 간 소통에 관여하는 기술
+
+`SQL`:DB 데이터를 관리하는 언어
+
+`HTTP`:데이터를 주고받기 위한 통신 규약
+
+`프로토콜`: 컴퓨터 간에 원활하게 통신하기 위해 사용하는 전 세계 표준언어
+![img.png](img.png)
+
+New -> File -> data.sql 서버를 껐다 켤때마다 데이터 자동으로 삽입됨
+``` roomsql
+INSERT INTO article(id, title, content) VALUES (1, '가가가가', '1111');
+INSERT INTO article(id, title, content) VALUES (2, '나나나나', '2222');
+INSERT INTO article(id, title, content) VALUES (3, '다다다다', '3333');
+```
+`edit.mustache`: action 속성은 폼데이터를 어디로 보낼지 URL 지정, method 속성은 어떻게 보낼지 방식 지정, id는 몇번 article을 수정하는지 알려줘야함
+```html
+<form class="container" action="/articles/update" method="post">
+    <input name="id" type="hidden" value="{{id}}">
+```
+
+
+``` java
+@PostMapping("/articles/update")
+    public String update(ArticleForm form){ // 매개변수로 DTO 받아오기
+        log.info(form.toString());
+        // 1. DTO를 엔티티로 변환하기
+        Article articleEntity = form.toEntity();
+        log.info(articleEntity.toString());
+        // 2. 엔티티를 DB에 저장
+        // 2-1. DB에서 기존 데이터 가져오기
+        Article target = articleRepository.findById(articleEntity.getId()).orElse(null);
+        // 2-2. 기존 데이터 값을 갱신하기
+        if (target!=null) {
+            articleRepository.save(articleEntity); // 엔티티를 DB 저장 (갱신)
+        }
+        // 3. 수정 결과 페이지로 리다이렉트
+        return "redirect:/articles/" + articleEntity.getId();
+    }
+```
+### sql에서 직접 DB 갱신
+``` roomsql
+UPDATE 테이블명 SET 속성명=변경할_값 WHERE 조건 ;
+UPDATE article SET title='가가가', content='나나나' where id='2';
+SELECT * FROM article 
+```
+
+# [스프링 부트 입문 16] 데이터 삭제하기
+`RedirectAttributes`: RedirectAttributes 객체의 addFlashAttribute() 메서드는 리다이렉트된 페이지에서 사용할 일회성 데이터를 등록할 수 있음
+![img_1.png](img_1.png)
+
+``` java 
+@GetMapping("/articles/{id}/delete")
+    public String delete(@PathVariable Long id, RedirectAttributes rttr){ // id를 매개변수로 가져오기
+        log.info("삭제 요청이 들어왔습니다!!");
+        // 1. 삭제할 대상 가져오기
+        Article target = articleRepository.findById(id).orElse(null); // 데이터 찾기
+        log.info(target.toString());
+        // 2. 대상 엔티티 삭제하기
+        if (target!=null) {
+            articleRepository.delete(target);
+            rttr.addFlashAttribute("msg", "삭제됐습니다!");
+        }
+        // 3. 결과 페이지로 리다이렉트하기
+        return "redirect:/articles";
+    }
+```
+
+`addFlashAttribute() 메서드`: 리다이렉트 시점에 한번만 사용할 데이터 등록할 수 있음 (한번 쓰고 사라지는 휘발성 데이터를 등록)
+``` java
+객체명.addFlashAttribute(넘겨주려는_키_문자열, 넘겨주려는_값_객체);
+```
+
+### 삭제 메시지 표시
+header.mustache
+```html
+{{#msg}}
+    <div class="alert alert-primary alert-dismissible">
+        {{msg}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{{/msg}}
+```
+### SQL에서 직접 삭제
+``` roomsql
+DELETE [FROM] 테이블명 WHERE 조건; --[]:생략가능
+DELETE article WHERE id=2;
+```
