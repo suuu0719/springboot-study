@@ -1,9 +1,6 @@
 package com.example.firstproject.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,16 +10,28 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 
-@Entity
+@Entity // DB가 해당 객체를 인식 가능 (해당 클래스로 테이블 만든다)
 @Getter // GetId() 메소드 정의 대신 롬복 사용
 public class Article {
+
     @Id //엔티티의 대푯값
-    @GeneratedValue //대푯값 자동으로 생성하게 함 (제목, 내용 같은 것이 있더라도 대푯값 id로 다른 글임을 구분 가능)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // DB가 id를 자동 생성 어노테이션
     private Long id;
+
     @Column //db에서 인식할 수 있도록 함, 두 필드가 DB테이블의 각 열과 연결됨
     private String title;
+
     @Column
     private String content;
+
+    public void patch(Article article) {
+        if (article.title!=null){
+            this.title = article.title;
+        }
+        if (article.content != null){
+            this.content = article.content;
+        }
+    }
 
 
     // Article 생성자 추가

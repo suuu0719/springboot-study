@@ -366,3 +366,7 @@ header.mustache
 DELETE [FROM] 테이블명 WHERE 조건; --[]:생략가능
 DELETE article WHERE id=2;
 ```
+
+# [스프링 부트 입문 17] CRUD와 SQL 쿼리
+`쿼리`: DB에 정보를 요청하는 구문
+`로깅`: 시스템이 작동할 때 당시의 상태와 작동 정보를 기록하는 것
