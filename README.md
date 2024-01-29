@@ -285,7 +285,7 @@ value="{{title}}" <!--데이터 불러오기, article.title에서 article 생략
 `HTTP`:데이터를 주고받기 위한 통신 규약
 
 `프로토콜`: 컴퓨터 간에 원활하게 통신하기 위해 사용하는 전 세계 표준언어
-![img.png](img.png)
+![img.png](img/img.png)
 
 New -> File -> data.sql 서버를 껐다 켤때마다 데이터 자동으로 삽입됨
 ``` roomsql
@@ -327,7 +327,7 @@ SELECT * FROM article
 
 # [스프링 부트 입문 16] 데이터 삭제하기
 `RedirectAttributes`: RedirectAttributes 객체의 addFlashAttribute() 메서드는 리다이렉트된 페이지에서 사용할 일회성 데이터를 등록할 수 있음
-![img_1.png](img_1.png)
+![img_1.png](img/img_1.png)
 
 ``` java 
 @GetMapping("/articles/{id}/delete")
@@ -482,13 +482,13 @@ create table article (
 
 ## HTTP 요청과 응답 구조
 
-![img_2.png](img_2.png)
+![img_2.png](img/img_2.png)
 # **[스프링 부트 입문 19] HTTP와 RestController**
 
 ## REST API 주소 설계
 
-![img_3.png](img_3.png)
-![img_4.png](img_4.png)
+![img_3.png](img/img_3.png)
+![img_4.png](img/img_4.png)
 `@RestController`: Rest API용 컨트롤러, JSON 반환 → 데이터를 반환한다 (일반 컨트롤러는 뷰템플릿페이지를 반환)
 
 클라이언트의 데이터 조회, 생성, 수정, 삭제 요청을 HTTP 메서드에 맞게 각각 `@GetMapping`, `@PostMapping`, `@PatchMapping`, `@DeleteMapping` 으로 받아 처리함
@@ -563,7 +563,7 @@ create table article (
 # **[스프링 부트 입문 20] 서비스 계층과 트랜잭션**
 
 `서비스`: 컨트롤러와 리파지터리 사이에 위치하는 계층, 처리 업무의 순서를 총괄
-![img_5.png](img_5.png)
+![img_5.png](img/img_5.png)
 `트랜잭션`: 서비스의 업무 처리는 트랜젝션 단위로 진행됨, 모두 성공해야하는 일련의 과정을 뜻함
 
 `롤백`: 트랜잭션 실패 시 진행 초기 단계로 돌리는 것
