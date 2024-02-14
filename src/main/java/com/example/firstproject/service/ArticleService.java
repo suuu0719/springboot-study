@@ -3,18 +3,16 @@ package com.example.firstproject.service;
 import com.example.firstproject.dto.ArticleForm;
 import com.example.firstproject.entity.Article;
 import com.example.firstproject.repository.ArticleRepository;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service // 서비스 선언(서비스 객체를 스프링부트에 생성)
+@Service // 서비스 객체 선언
 public class ArticleService {
     @Autowired
     private ArticleRepository articleRepository;
@@ -24,62 +22,67 @@ public class ArticleService {
     }
 
     public Article show(Long id) {
-        return  articleRepository.findById(id).orElse(null);
+        return articleRepository.findById(id).orElse(null);
     }
 
     public Article create(ArticleForm dto) {
         Article article = dto.toEntity();
-        if (article.getId()!=null) {
+        if (article.getId() != null) {
             return null;
         }
         return articleRepository.save(article);
     }
 
     public Article update(Long id, ArticleForm dto) {
-        // 1. 수정용 엔티티 생성
+        // 1. DTO -> 엔티티 변환하기
         Article article = dto.toEntity();
         log.info("id: {}, article: {}", id, article.toString());
-        // 2. 대상 엔티티를 조회
+
+        // 2. 타겟 조회하기
         Article target = articleRepository.findById(id).orElse(null);
-        // 3. 잘못된 요청 처리(대상이 없거나 id가 다른 경우)
+
+        // 3. 잘못된 요청 처리하기
         if (target == null || id != article.getId()) {
-            // 400, 잘못된 요청 응답
+            // 400번, 잘못된 요청 응답!
             log.info("잘못된 요청! id: {}, article: {}", id, article.toString());
             return null;
         }
-        // 4. 업데이트
-        target.patch(article); // 뭔가 작성 안하고 수정할 시 그 전 상태 그대로 유지되도록
-        Article updated = articleRepository.save(target);
 
+        // 4. 업데이트 및 정상 응답(200)하기
+        target.patch(article);
+        Article updated = articleRepository.save(target);
         return updated;
     }
 
     public Article delete(Long id) {
-        // 대상 찾기
+        // 1. 대상 찾기
         Article target = articleRepository.findById(id).orElse(null);
-        // 잘못된 요청 처리
-        if (target == null){
+
+        // 2. 잘못된 요청 처리하기
+        if (target == null) {
             return null;
         }
-        // 대상 삭제 후 반환
+
+        // 3. 대상 삭제하기
         articleRepository.delete(target);
         return target;
     }
-
     @Transactional
     public List<Article> createArticles(List<ArticleForm> dtos) {
-        // dto 묶음을 entity 묶음으로 변환
+        // 1. dto 묶음을 엔티티 묶음으로 변환하기
         List<Article> articleList = dtos.stream()
                 .map(dto -> dto.toEntity())
                 .collect(Collectors.toList());
-        // entity 묶음을 DB로 저장
+
+        // 2. 엔티티 묶음을 DB에 저장하기
         articleList.stream()
                 .forEach(article -> articleRepository.save(article));
-        // 강제 예외 발생
-        articleRepository.findById(-1L).orElseThrow(
-                () -> new IllegalArgumentException("결제 실패!")
-        );
-        // 결과값 반환
+
+        // 3. 강제 예외 발생시키기
+        articleRepository.findById(-1L)
+                .orElseThrow(() -> new IllegalArgumentException("결제 실패!"));
+
+        // 4. 결과값 반환하기
         return articleList;
     }
 }
